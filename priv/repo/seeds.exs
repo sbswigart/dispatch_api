@@ -10,8 +10,7 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-alias DispatchApi.Repo
-alias DispatchApi.Task
+alias DispatchApi.{Task, User, Repo}
 
 [
   %Task{
@@ -23,3 +22,6 @@ alias DispatchApi.Task
     completed: true
   }
 ] |> Enum.each(&Repo.insert!(&1))
+
+User.changeset(%User{}, %{username: "test", email: "test@test.com", password: "testing"})
+|> Repo.insert!
