@@ -8,6 +8,8 @@ defmodule DispatchApi.User do
 
     field :password, :string, virtual: true
 
+    has_many :tasks, DispatchApi.Task
+
     timestamps()
   end
 

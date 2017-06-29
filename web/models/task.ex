@@ -4,6 +4,7 @@ defmodule DispatchApi.Task do
   schema "tasks" do
     field :description, :string
     field :completed, :boolean, default: false
+    belongs_to :user, DispatchApi.User
 
     timestamps()
   end

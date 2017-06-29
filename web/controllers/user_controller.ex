@@ -3,14 +3,13 @@ defmodule DispatchApi.UserController do
 
   alias DispatchApi.User
 
-  plug Guardian.Plug.EnsureAuthenticated, handler: DispatchApi.AuthErrorHandler
+  plug Guardian.Plug.EnsureAuthenticated, [handler: DispatchApi.AuthErrorHandler] when not action in [:create]
 
   plug :scrub_params, "data" when action in [:create, :update]
 
-
   def index(conn, _params) do
     users = Repo.all(User)
-    render(conn, "index.json", data: users)
+    render(conn, "index.json-api", data: users)
   end
 
   def create(conn, %{"data" => %{"attributes" => user_params}}) do
@@ -21,17 +20,17 @@ defmodule DispatchApi.UserController do
         conn
         |> put_status(:created)
         |> put_resp_header("location", user_path(conn, :show, user))
-        |> render("show.json", data: user)
+        |> render("show.json-api", data: user)
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(DispatchApi.ChangesetView, "error.json", changeset: changeset)
+        |> render(DispatchApi.ChangesetView, "error.json-api", changeset: changeset)
     end
   end
 
   def show(conn, %{"id" => id}) do
     user = Repo.get!(User, id)
-    render(conn, "show.json", data: user)
+    render(conn, "show.json-api", data: user)
   end
 
   def update(conn, %{"id" => id, "data" => %{"attributes" => user_params}}) do
@@ -40,11 +39,11 @@ defmodule DispatchApi.UserController do
 
     case Repo.update(changeset) do
       {:ok, user} ->
-        render(conn, "show.json", data: user)
+        render(conn, "show.json-api", data: user)
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(DispatchApi.ChangesetView, "error.json", changeset: changeset)
+        |> render(DispatchApi.ChangesetView, "error.json-api", changeset: changeset)
     end
   end
 

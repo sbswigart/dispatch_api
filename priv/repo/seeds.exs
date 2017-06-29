@@ -12,16 +12,23 @@
 
 alias DispatchApi.{Task, User, Repo}
 
-[
-  %Task{
-    description: "complete dispatch api",
-    completed: false
-  },
-  %Task{
-    description: "start dispatch api",
-    completed: true
-  }
-] |> Enum.each(&Repo.insert!(&1))
+task = %Task{
+          description: "complete dispatch api",
+          completed: false
+        }
 
 User.changeset(%User{}, %{username: "test", email: "test@test.com", password: "testing"})
+|> Repo.insert!
+|> Ecto.build_assoc(:tasks, task)
+|> Repo.insert!
+
+
+task = %Task{
+          description: "complete all the tasks",
+          completed: false
+        }
+
+User.changeset(%User{}, %{username: "test02", email: "test02@test.com", password: "testing"})
+|> Repo.insert!
+|> Ecto.build_assoc(:tasks, task)
 |> Repo.insert!
